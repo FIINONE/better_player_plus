@@ -1,5 +1,6 @@
-## 1.1.6
+## 1.2.0
 
+* Dart SDK updated → 3.11.0, Flutter SDK updated → 3.41.0
 * Fixed controlsVisibilityStream feedback loop by guarding against duplicate state updates
 * Fixed controlsVisibilityStream not emitting when UI auto-hides
 * Fixed aspect ratio issues for iOS AVPlayer
@@ -7,6 +8,7 @@
 * Preserved iOS playback speed across player actions (seek, pause, resume)
 * Fixed HLS parsing for default audio source selection in HLS streams
 * Added iOS wakelock (disable auto-sleep) support during playback
+* Resolved all dart analyze warnings and errors (zero issues)
 
 ## 1.1.5
 
