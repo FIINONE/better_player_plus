@@ -1,3 +1,13 @@
+## 1.1.6
+
+* Fixed controlsVisibilityStream feedback loop by guarding against duplicate state updates
+* Fixed controlsVisibilityStream not emitting when UI auto-hides
+* Fixed aspect ratio issues for iOS AVPlayer
+* Fixed audio track override not being cleared before applying a new one
+* Preserved iOS playback speed across player actions (seek, pause, resume)
+* Fixed HLS parsing for default audio source selection in HLS streams
+* Added iOS wakelock (disable auto-sleep) support during playback
+
 ## 1.1.5
 
 * Fixed error in WebVTT file parser for subtitle handling
