@@ -29,12 +29,30 @@ let package = Package(
     ],
     targets: [
         .target(
+            name: "GCDWebServer"
+        ),
+        .target(
+            name: "PINCache"
+        ),
+        .target(
+            name: "HLSCachingReverseProxyServer",
+            dependencies: [
+                .target(name: "GCDWebServer"),
+                .target(name: "PINCache"),
+            ]
+        ),
+        .target(
             name: "better_player_plus",
             dependencies: [
                 .product(name: "FlutterFramework", package: "FlutterFramework"),
                 .product(name: "Cache", package: "Cache"),
-                // Add GCDWebServer, HLSCachingReverseProxyServer, PINCache here
-                // once their SPM packages are resolved above.
+                .target(name: "GCDWebServer"),
+                .target(name: "PINCache"),
+                .target(name: "HLSCachingReverseProxyServer"),
+            ],
+            exclude: [
+                "BetterPlayerPlugin.h",
+                "BetterPlayerPlugin.m",
             ],
             resources: [
                 // Uncomment if PrivacyInfo.xcprivacy is added:
