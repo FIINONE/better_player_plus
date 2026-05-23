@@ -1,8 +1,9 @@
 ## 1.3.0
 
-* iOS Swift Package Manager (SPM) support added
-* Migrated iOS source files from `Classes/` to SPM-compatible structure (`better_player_plus/Sources/better_player_plus/`)
-* Added `Package.swift` for SPM integration alongside existing CocoaPods support
+* Added iOS Swift Package Manager (SPM) support
+* Added `Package.swift` to support native SPM integration
+* Migrated iOS plugin source files from `Classes/` to `better_player_plus/Sources/better_player_plus/` for SPM compatibility
+* Cleaned up legacy CocoaPods integration from the iOS example project for smoother SPM-based builds
 
 ## 1.2.1
 
