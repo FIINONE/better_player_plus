@@ -349,6 +349,8 @@ extension BetterPlayerPlugin {
                     .resizeAspect
             case "fill":
                     .resizeAspectFill
+            case "stretch":
+                    .resize
             default: .resizeAspect
                 
             }

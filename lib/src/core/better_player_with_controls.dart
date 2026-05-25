@@ -203,6 +203,8 @@ class _BetterPlayerVideoFitWidgetState extends State<_BetterPlayerVideoFitWidget
 
   bool _started = false;
 
+  String? _lastAppliedGravity;
+
   StreamSubscription<BetterPlayerControllerEvent>? _controllerEventSubscription;
 
   @override
@@ -259,15 +261,45 @@ class _BetterPlayerVideoFitWidgetState extends State<_BetterPlayerVideoFitWidget
           _started = false;
         });
       }
+      if (event == BetterPlayerControllerEvent.setFit) {
+        if (Platform.isIOS) {
+          _applyBoxFitOnIOS(widget.betterPlayerController.getFit());
+        }
+      }
     });
+  }
+
+  /// Converts [BoxFit] to a native iOS AVLayerVideoGravity string and applies it.
+  void _applyBoxFitOnIOS(BoxFit boxFit) {
+    final String gravity;
+    switch (boxFit) {
+      case BoxFit.fill:
+        gravity = 'stretch';
+        break;
+      case BoxFit.cover:
+        gravity = 'fill';
+        break;
+      case BoxFit.contain:
+      case BoxFit.fitWidth:
+      case BoxFit.fitHeight:
+      case BoxFit.scaleDown:
+      case BoxFit.none:
+        gravity = 'aspect';
+        break;
+    }
+    if (_lastAppliedGravity != gravity) {
+      _lastAppliedGravity = gravity;
+      controller?.setAspectRatio(gravity);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     if (_initialized && _started) {
       // iOS platform views (UiKitView) don't play well with Clip/Transform/FittedBox.
-      // Render the platform view directly to avoid black screen.
+      // Apply BoxFit as native video gravity on iOS instead.
       if (Platform.isIOS) {
+        _applyBoxFitOnIOS(widget.boxFit);
         return SizedBox.expand(child: VideoPlayer(controller));
       }
       return Center(
