@@ -82,16 +82,16 @@ import Cache
     @objc public func getCachingPlayerItemForNormalPlayback(_ url: URL, cacheKey: String?, videoExtension: String?, headers: Dictionary<NSObject,AnyObject>) -> AVPlayerItem? {
         let mimeTypeResult = getMimeType(url:url, explicitVideoExtension: videoExtension)
         if (mimeTypeResult.1 == "application/vnd.apple.mpegurl"){
-            var convertedHeaders = [String: String]()
+            var httpHeaders = [String: String]()
             headers.forEach { key, value in
                 let convertedKey: String? = key as? String
                 let convertedValue: String? = (value as? String)
                     ?? (value as? NSNumber).map { $0.stringValue }
                 if let convertedKey = convertedKey, let convertedValue = convertedValue {
-                    convertedHeaders[convertedKey] = convertedValue
+                    httpHeaders[convertedKey] = convertedValue
                 }
             }
-            let playerItem = AVPlayerItem(asset: AVURLAsset(url: url, options: [AVURLAssetHTTPHeaderFieldsKey: convertedHeaders]))
+            let playerItem = AVPlayerItem(asset: AVURLAsset(url: url, options: [AVURLAssetHTTPHeaderFieldsKey: httpHeaders]))
             return playerItem
         } else {
             return getCachingPlayerItem(url, cacheKey: cacheKey, videoExtension: videoExtension, headers: headers)
