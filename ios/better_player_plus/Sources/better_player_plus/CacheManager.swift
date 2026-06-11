@@ -31,6 +31,7 @@ import Cache
     
 
     ///Setups cache server for HLS streams
+    @available(*, deprecated, message: "No setup is required for iOS HLS playback.")
     @objc public func setup(){
         // Intentionally left blank. HLS playback is routed directly through AVURLAsset
         // to keep compatibility with modern fMP4/CMAF playlists.
@@ -83,7 +84,13 @@ import Cache
         if (mimeTypeResult.1 == "application/vnd.apple.mpegurl"){
             var convertedHeaders = [String: String]()
             headers.forEach { key, value in
-                convertedHeaders[String(describing: key)] = String(describing: value)
+                let convertedKey: String? = (key as? String) ?? (key as? NSString).map { String($0) }
+                let convertedValue: String? = (value as? String)
+                    ?? (value as? NSString).map { String($0) }
+                    ?? (value as? NSNumber).map { $0.stringValue }
+                if let convertedKey = convertedKey, let convertedValue = convertedValue {
+                    convertedHeaders[convertedKey] = convertedValue
+                }
             }
             let playerItem = AVPlayerItem(asset: AVURLAsset(url: url, options: [AVURLAssetHTTPHeaderFieldsKey: convertedHeaders]))
             return playerItem
