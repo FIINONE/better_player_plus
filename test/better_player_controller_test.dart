@@ -384,7 +384,7 @@ void main() {
       final controllerEvents = <BetterPlayerControllerEvent>[];
       final subscription = betterPlayerController.controllerEventStream.listen(controllerEvents.add);
 
-      betterPlayerController.setTrack(
+      await betterPlayerController.setTrack(
         const BetterPlayerAsmsTrack('720p', 1280, 720, 1200000, 30, 'avc1.64001f', 'video/mp4'),
       );
 

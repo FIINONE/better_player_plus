@@ -845,10 +845,13 @@ class BetterPlayerController {
 
   ///Setup track parameters for currently played video. Can be only used for HLS or DASH
   ///data source.
-  void setTrack(BetterPlayerAsmsTrack track) {
+  Future<void> setTrack(BetterPlayerAsmsTrack track) async {
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
+
+    await videoPlayerController!.setTrackParameters(track.width, track.height, track.bitrate);
+    _betterPlayerAsmsTrack = track;
     _postEvent(
       BetterPlayerEvent(
         BetterPlayerEventType.changedTrack,
@@ -863,9 +866,6 @@ class BetterPlayerController {
         },
       ),
     );
-
-    videoPlayerController!.setTrackParameters(track.width, track.height, track.bitrate);
-    _betterPlayerAsmsTrack = track;
     _postControllerEvent(BetterPlayerControllerEvent.changedTrack);
   }
 
