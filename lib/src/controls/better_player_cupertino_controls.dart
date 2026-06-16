@@ -39,7 +39,6 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
   VideoPlayerController? _controller;
   BetterPlayerController? _betterPlayerController;
   StreamSubscription<dynamic>? _controlsVisibilityStreamSubscription;
-  bool _isLongPressSpeedActive = false;
 
   BetterPlayerControlsConfiguration get _controlsConfiguration => widget.controlsConfiguration;
 
@@ -51,25 +50,6 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
 
   @override
   BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration => _controlsConfiguration;
-
-  Future<void> _resetLongPressSpeed() async {
-    try {
-      await _betterPlayerController?.setSpeed(1);
-    } catch (_) {
-      // Keep UI state consistent even if platform rejects a speed update.
-    } finally {
-      _betterPlayerController?.show2xListenable.value = null;
-    }
-  }
-
-  void _clearLongPressSpeedIfNeeded() {
-    final hasOverlay = _betterPlayerController?.show2xListenable.value != null;
-    if (!_isLongPressSpeedActive && !hasOverlay) {
-      return;
-    }
-    _isLongPressSpeedActive = false;
-    unawaited(_resetLongPressSpeed());
-  }
 
   @override
   Widget build(BuildContext context) => buildLTRDirectionality(_buildMainWidget());
@@ -108,48 +88,47 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
         _buildBottomBar(backgroundColor, iconColor, barHeight),
       ],
     );
-    return Listener(
-      onPointerUp: (_) => _clearLongPressSpeedIfNeeded(),
-      onPointerCancel: (_) => _clearLongPressSpeedIfNeeded(),
-      child: GestureDetector(
-        onTap: () {
-          if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-            BetterPlayerMultipleGestureDetector.of(context)!.onTap?.call();
-          }
-          controlsNotVisible ? cancelAndRestartTimer() : changePlayerControlsNotVisible(true);
-        },
-        onDoubleTap: () {
-          if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-            BetterPlayerMultipleGestureDetector.of(context)!.onDoubleTap?.call();
-          }
-          cancelAndRestartTimer();
-          _onPlayPause();
-        },
-        onLongPress: () {
-          if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-            BetterPlayerMultipleGestureDetector.of(context)!.onLongPress?.call();
-          }
-          _isLongPressSpeedActive = true;
+    return GestureDetector(
+      onTap: () {
+        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+          BetterPlayerMultipleGestureDetector.of(context)!.onTap?.call();
+        }
+        controlsNotVisible ? cancelAndRestartTimer() : changePlayerControlsNotVisible(true);
+      },
+      onDoubleTap: () {
+        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+          BetterPlayerMultipleGestureDetector.of(context)!.onDoubleTap?.call();
+        }
+        cancelAndRestartTimer();
+        _onPlayPause();
+      },
+      onLongPress: () {
+        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+          BetterPlayerMultipleGestureDetector.of(context)!.onLongPress?.call();
+        }
+        if (_betterPlayerController?.isFullScreen ?? false) {
           _betterPlayerController?.setSpeed(2);
           _betterPlayerController?.show2xListenable.value = 2;
-        },
-        onLongPressCancel: () {
-          if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-            BetterPlayerMultipleGestureDetector.of(context)!.onLongPressCancel?.call();
-          }
-          _clearLongPressSpeedIfNeeded();
-        },
-        onLongPressEnd: (details) {
-          if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-            BetterPlayerMultipleGestureDetector.of(context)!.onLongPressEnd?.call();
-          }
-          _clearLongPressSpeedIfNeeded();
-        },
-        onLongPressMoveUpdate: on2xLongPressMoveUpdate,
-        child: AbsorbPointer(
-          absorbing: controlsNotVisible,
-          child: isFullScreen ? SafeArea(child: controlsColumn) : controlsColumn,
-        ),
+        }
+      },
+      onLongPressCancel: () {
+        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+          BetterPlayerMultipleGestureDetector.of(context)!.onLongPressCancel?.call();
+        }
+      },
+      onLongPressEnd: (details) {
+        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+          BetterPlayerMultipleGestureDetector.of(context)!.onLongPressEnd?.call();
+        }
+        if (_betterPlayerController?.isFullScreen ?? false) {
+          _betterPlayerController?.setSpeed(1);
+          _betterPlayerController?.show2xListenable.value = null;
+        }
+      },
+      onLongPressMoveUpdate: on2xLongPressMoveUpdate,
+      child: AbsorbPointer(
+        absorbing: controlsNotVisible,
+        child: isFullScreen ? SafeArea(child: controlsColumn) : controlsColumn,
       ),
     );
   }
