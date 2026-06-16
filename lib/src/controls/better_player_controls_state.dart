@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 import 'package:better_player_plus/better_player_plus.dart';
@@ -195,7 +196,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
 
     return GestureDetector(
       onTap: () {
-        changePlaybackSpeed(value);
+        unawaited(changePlaybackSpeed());
       },
       child: AnimatedOpacity(
         opacity: hideStuff ? 0.0 : 1.0,
@@ -225,7 +226,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
 
     return GestureDetector(
       onTap: () {
-        changePlaybackSpeed(value);
+        unawaited(changePlaybackSpeed());
       },
       child: AnimatedOpacity(
         opacity: controlsNotVisible ? 0.0 : 1.0,
@@ -252,7 +253,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
     );
   }
 
-  void changePlaybackSpeed(double value) {
+  Future<void> changePlaybackSpeed() async {
+    final value = betterPlayerController!.videoPlayerController!.value.speed;
     double nextSpeed;
     if (value < 1.25) {
       nextSpeed = 1.5;
@@ -261,7 +263,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
     } else {
       nextSpeed = 1.0;
     }
-    betterPlayerController!.setSpeed(nextSpeed);
+    await betterPlayerController!.setSpeed(nextSpeed);
   }
 
   Widget buildMaterialQualitiesButton(bool hideStuff, void Function() onPlayerHide) {

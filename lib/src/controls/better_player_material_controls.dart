@@ -40,6 +40,7 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
   VideoPlayerController? _controller;
   BetterPlayerController? _betterPlayerController;
   StreamSubscription<dynamic>? _controlsVisibilityStreamSubscription;
+  bool _isLongPressSpeedActive = false;
 
   BetterPlayerControlsConfiguration get _controlsConfiguration => widget.controlsConfiguration;
 
@@ -88,6 +89,7 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
           BetterPlayerMultipleGestureDetector.of(context)!.onLongPress?.call();
         }
+        _isLongPressSpeedActive = true;
         _betterPlayerController?.setSpeed(2);
         _betterPlayerController?.show2xListenable.value = 2;
       },
@@ -95,13 +97,19 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
           BetterPlayerMultipleGestureDetector.of(context)!.onLongPressCancel?.call();
         }
-        _resetLongPressSpeed();
+        if (_isLongPressSpeedActive) {
+          _isLongPressSpeedActive = false;
+          _resetLongPressSpeed();
+        }
       },
       onLongPressEnd: (details) {
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
           BetterPlayerMultipleGestureDetector.of(context)!.onLongPressEnd?.call();
         }
-        _resetLongPressSpeed();
+        if (_isLongPressSpeedActive) {
+          _isLongPressSpeedActive = false;
+          _resetLongPressSpeed();
+        }
       },
       onLongPressMoveUpdate: on2xLongPressMoveUpdate,
       child: AbsorbPointer(
