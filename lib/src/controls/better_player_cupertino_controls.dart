@@ -51,6 +51,16 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
   @override
   BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration => _controlsConfiguration;
 
+  Future<void> _resetLongPressSpeed() async {
+    try {
+      await _betterPlayerController?.setSpeed(1);
+    } catch (_) {
+      // Keep UI state consistent even if platform rejects a speed update.
+    } finally {
+      _betterPlayerController?.show2xListenable.value = null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) => buildLTRDirectionality(_buildMainWidget());
 
@@ -113,13 +123,13 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
           BetterPlayerMultipleGestureDetector.of(context)!.onLongPressCancel?.call();
         }
+        _resetLongPressSpeed();
       },
       onLongPressEnd: (details) {
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
           BetterPlayerMultipleGestureDetector.of(context)!.onLongPressEnd?.call();
         }
-        _betterPlayerController?.setSpeed(1);
-        _betterPlayerController?.show2xListenable.value = null;
+        _resetLongPressSpeed();
       },
       onLongPressMoveUpdate: on2xLongPressMoveUpdate,
       child: AbsorbPointer(
