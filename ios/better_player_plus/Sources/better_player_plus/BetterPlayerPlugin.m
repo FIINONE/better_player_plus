@@ -5,4 +5,8 @@
 #import "better_player_plus-Swift.h"
 #endif
 
-// Swift `BetterPlayerPlugin` implementation provides the plugin entry point.
+@implementation BetterPlayerPlugin
++ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
+  [SwiftBetterPlayerPlugin registerWithRegistrar:registrar];
+}
+@end

@@ -5,7 +5,7 @@ import AVKit
 import UIKit
 import MediaPlayer
 
-public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFactory {
+public class SwiftBetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFactory {
     private let messenger: FlutterBinaryMessenger
     private var players: [Int64: BetterPlayer] = [:]
     private let registrar: FlutterPluginRegistrar
@@ -28,7 +28,7 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
 
     @objc public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "better_player_channel", binaryMessenger: registrar.messenger())
-        let instance = BetterPlayerPlugin(registrar: registrar)
+        let instance = SwiftBetterPlayerPlugin(registrar: registrar)
         registrar.addMethodCallDelegate(instance, channel: channel)
         registrar.register(instance, withId: "com.jhomlala/better_player")
     }
@@ -200,7 +200,7 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
     }
 }
 
-extension BetterPlayerPlugin {
+extension SwiftBetterPlayerPlugin {
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         if call.method == "init" {
             for (_, player) in players { player.dispose() }
