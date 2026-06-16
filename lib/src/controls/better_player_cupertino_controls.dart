@@ -76,7 +76,13 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
     _wasLoading = isLoading(_latestValue);
     final controlsColumn = Column(
       children: <Widget>[
-        _buildTopBar(backgroundColor, iconColor, barHeight, buttonPadding),
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            _buildTopBar(backgroundColor, iconColor, barHeight, buttonPadding),
+            Positioned(top: isFullScreen ? 28 : 5, left: 0, right: 0, child: build2x()),
+          ],
+        ),
         if (_wasLoading) Expanded(child: Center(child: _buildLoadingWidget())) else _buildHitArea(),
         _buildNextVideoWidget(),
         _buildBottomBar(backgroundColor, iconColor, barHeight),
@@ -100,7 +106,26 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
           BetterPlayerMultipleGestureDetector.of(context)!.onLongPress?.call();
         }
+        if (_betterPlayerController?.isFullScreen ?? false) {
+          _betterPlayerController?.setSpeed(2);
+          _betterPlayerController?.show2xListenable.value = 2;
+        }
       },
+      onLongPressCancel: () {
+        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+          BetterPlayerMultipleGestureDetector.of(context)!.onLongPressCancel?.call();
+        }
+      },
+      onLongPressEnd: (details) {
+        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+          BetterPlayerMultipleGestureDetector.of(context)!.onLongPressEnd?.call();
+        }
+        if (_betterPlayerController?.isFullScreen ?? false) {
+          _betterPlayerController?.setSpeed(1);
+          _betterPlayerController?.show2xListenable.value = null;
+        }
+      },
+      onLongPressMoveUpdate: on2xLongPressMoveUpdate,
       child: AbsorbPointer(
         absorbing: controlsNotVisible,
         child: isFullScreen ? SafeArea(child: controlsColumn) : controlsColumn,

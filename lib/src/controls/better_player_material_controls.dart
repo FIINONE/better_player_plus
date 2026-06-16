@@ -78,7 +78,26 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
           BetterPlayerMultipleGestureDetector.of(context)!.onLongPress?.call();
         }
+        if (_betterPlayerController?.isFullScreen ?? false) {
+          _betterPlayerController?.setSpeed(2);
+          _betterPlayerController?.show2xListenable.value = 2;
+        }
       },
+      onLongPressCancel: () {
+        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+          BetterPlayerMultipleGestureDetector.of(context)!.onLongPressCancel?.call();
+        }
+      },
+      onLongPressEnd: (details) {
+        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+          BetterPlayerMultipleGestureDetector.of(context)!.onLongPressEnd?.call();
+        }
+        if (_betterPlayerController?.isFullScreen ?? false) {
+          _betterPlayerController?.setSpeed(1);
+          _betterPlayerController?.show2xListenable.value = null;
+        }
+      },
+      onLongPressMoveUpdate: on2xLongPressMoveUpdate,
       child: AbsorbPointer(
         absorbing: controlsNotVisible,
         child: Stack(
@@ -87,6 +106,7 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
             if (_wasLoading) Center(child: _buildLoadingWidget()) else _buildHitArea(),
             Positioned(top: 0, left: 0, right: 0, child: _buildTopBar()),
             Positioned(bottom: 0, left: 0, right: 0, child: _buildBottomBar()),
+            Positioned(top: 44, left: 0, right: 0, child: build2x()),
             _buildNextVideoWidget(),
           ],
         ),

@@ -8,4 +8,5 @@ analyzer:
     no_default_cases: ignore
     discarded_futures: ignore
     avoid_positional_boolean_parameters: ignore
+    avoid_catches_without_on_clauses: ignore
     document_ignores: ignore

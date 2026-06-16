@@ -211,6 +211,8 @@ class BetterPlayerController {
   ///Currently displayed [BetterPlayerSubtitle].
   BetterPlayerSubtitle? renderedSubtitle;
 
+  final show2xListenable = ValueNotifier<double?>(null);
+
   ///Get BetterPlayerController from context. Used in InheritedWidget.
   static BetterPlayerController of(BuildContext context) {
     final betterPLayerControllerProvider = context
@@ -1231,6 +1233,7 @@ class BetterPlayerController {
       _videoEventStreamSubscription?.cancel();
       _disposed = true;
       _controllerEventStreamController.close();
+      show2xListenable.dispose();
 
       ///Delete files async
       for (final file in _tempFiles) {

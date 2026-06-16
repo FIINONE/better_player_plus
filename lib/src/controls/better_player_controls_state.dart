@@ -114,6 +114,75 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
     );
   }
 
+  void on2xLongPressMoveUpdate(LongPressMoveUpdateDetails details) {
+    if (betterPlayerController?.isFullScreen ?? false) {
+      final upSpeed = (details.offsetFromOrigin.dx / 100).toStringAsFixed(1);
+
+      try {
+        var speed = 2.0 + double.parse(upSpeed);
+        speed = speed >= 3.0 ? 3.0 : speed <= 1.0 ? 1.0 : speed;
+
+        betterPlayerController?.setSpeed(speed);
+        betterPlayerController?.show2xListenable.value = speed;
+      } catch (_) {}
+    }
+  }
+
+  Widget build2x() => ValueListenableBuilder(
+      valueListenable: betterPlayerController!.show2xListenable,
+      builder: (context, speed, child) {
+        if (speed == null) {
+          return const SizedBox();
+        }
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xE0141416),
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    alignment: Alignment.center,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${speed}x',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            height: 20 / 14,
+                          ),
+                        ),
+                        const Icon(Icons.fast_forward, size: 20, color: Colors.white),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Swipe sideways to adjust speed',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    height: 20 / 14,
+                  ),
+                ),
+                const Icon(Icons.swipe, size: 25, color: Colors.white),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+
   Widget _buildMoreOptionsListRow(IconData icon, String name, void Function() onTap) =>
       BetterPlayerMaterialClickableWidget(
         onTap: onTap,
@@ -132,13 +201,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
 
   void _showSpeedChooserWidget() {
     _showModalBottomSheet([
-      _buildSpeedRow(0.25),
       _buildSpeedRow(0.5),
-      _buildSpeedRow(0.75),
       _buildSpeedRow(1),
-      _buildSpeedRow(1.25),
       _buildSpeedRow(1.5),
-      _buildSpeedRow(1.75),
       _buildSpeedRow(2),
     ]);
   }
@@ -242,6 +307,31 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
   ///Track selection is used for HLS / DASH videos
   ///Resolution selection is used for normal videos
   void _showQualitiesSelectionWidget() {
+    showModalBottomSheet<void>(
+      backgroundColor: Colors.transparent,
+      context: context,
+      useRootNavigator: betterPlayerController?.betterPlayerConfiguration.useRootNavigator ?? false,
+      builder: (context) {
+        final children = _createQualitiesSelectionWidget();
+        return SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+              decoration: BoxDecoration(
+                color: betterPlayerControlsConfiguration.overflowModalColor,
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(24), topRight: Radius.circular(24)),
+              ),
+              child: Column(children: children),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  List<Widget> _createQualitiesSelectionWidget() {
     // HLS / DASH
     final List<String> asmsTrackNames = betterPlayerController!.betterPlayerDataSource!.asmsTrackNames ?? [];
     final List<BetterPlayerAsmsTrack> asmsTracks = betterPlayerController!.betterPlayerAsmsTracks;
@@ -270,7 +360,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
       );
     }
 
-    _showModalBottomSheet(children);
+    return children;
   }
 
   Widget _buildTrackRow(BetterPlayerAsmsTrack track, String? preferredName) {
