@@ -652,19 +652,30 @@ class BetterPlayerController {
     );
   }
 
-  ///Set playback speed of video. Allows to set speed value between 0 and 2.
+  ///Set playback speed of video. Allows to set speed value between 0 and 3.
   Future<void> setSpeed(double speed) async {
-    if (speed <= 0 || speed > 2) {
-      BetterPlayerUtils.log('Speed must be between 0 and 2');
-      throw ArgumentError('Speed must be between 0 and 2');
+    if (speed <= 0 || speed > 3) {
+      BetterPlayerUtils.log('Speed must be between 0 and 3');
+      throw ArgumentError('Speed must be between 0 and 3');
     }
     if (videoPlayerController == null) {
       BetterPlayerUtils.log('The data source has not been initialized');
       throw StateError('The data source has not been initialized');
     }
-    await videoPlayerController?.setSpeed(speed);
+    var appliedSpeed = speed;
+    try {
+      await videoPlayerController?.setSpeed(speed);
+    } on Object {
+      // Some platform/player combinations reject speeds above 2.0.
+      if (speed > 2) {
+        appliedSpeed = 2;
+        await videoPlayerController?.setSpeed(appliedSpeed);
+      } else {
+        rethrow;
+      }
+    }
     _postEvent(
-      BetterPlayerEvent(BetterPlayerEventType.setSpeed, parameters: <String, dynamic>{_speedParameter: speed}),
+      BetterPlayerEvent(BetterPlayerEventType.setSpeed, parameters: <String, dynamic>{_speedParameter: appliedSpeed}),
     );
   }
 
