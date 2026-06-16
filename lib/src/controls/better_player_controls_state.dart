@@ -253,21 +253,15 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
   }
 
   void changePlaybackSpeed(double value) {
-    const epsilon = 0.01;
-    var index = playbackSpeedValues.indexWhere((element) => (element - value).abs() < epsilon);
-    if (index < 0) {
-      // If platform returns a slightly different floating value, snap to closest.
-      var bestDistance = double.infinity;
-      for (var i = 0; i < playbackSpeedValues.length; i++) {
-        final distance = (playbackSpeedValues[i] - value).abs();
-        if (distance < bestDistance) {
-          bestDistance = distance;
-          index = i;
-        }
-      }
+    double nextSpeed;
+    if (value < 1.25) {
+      nextSpeed = 1.5;
+    } else if (value < 1.75) {
+      nextSpeed = 2.0;
+    } else {
+      nextSpeed = 1.0;
     }
-    final nextIndex = (index + 1) % playbackSpeedValues.length;
-    betterPlayerController!.setSpeed(playbackSpeedValues[nextIndex]);
+    betterPlayerController!.setSpeed(nextSpeed);
   }
 
   Widget buildMaterialQualitiesButton(bool hideStuff, void Function() onPlayerHide) {
