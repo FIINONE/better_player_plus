@@ -28,7 +28,7 @@ class BetterPlayerCupertinoControls extends StatefulWidget {
 }
 
 class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<BetterPlayerCupertinoControls> {
-  final marginSize = 5.0;
+  bool get isFullScreen => _betterPlayerController?.isFullScreen ?? false;
   VideoPlayerValue? _latestValue;
   double? _latestVolume;
   Timer? _hideTimer;
@@ -171,7 +171,7 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
       onEnd: _onPlayerHide,
       child: Container(
         alignment: Alignment.bottomCenter,
-        margin: EdgeInsets.all(marginSize),
+        margin: EdgeInsets.all(isFullScreen ? 28 : 5),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: Container(
@@ -410,7 +410,11 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
     final iconSize = topBarHeight * 0.4;
     return Container(
       height: barHeight,
-      margin: EdgeInsets.only(top: marginSize, right: marginSize, left: marginSize),
+      margin: EdgeInsets.only(
+        top: isFullScreen ? 28 : 5,
+        right: isFullScreen ? 28 : 5,
+        left: isFullScreen ? 28 : 5,
+      ),
       child: Row(
         children: <Widget>[
           if (_controlsConfiguration.enableFullscreen)
@@ -423,13 +427,18 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
           else
             const SizedBox(),
           const Spacer(),
-          if (_controlsConfiguration.enableMute)
-            _buildMuteButton(_controller, backgroundColor, iconColor, barHeight, iconSize, buttonPadding)
+          if (_controlsConfiguration.enablePlaybackSpeed)
+            buildCupertinoPlaybackSpeedText(backgroundColor, iconColor, barHeight, buttonPadding)
           else
             const SizedBox(),
           const SizedBox(width: 4),
-          if (_controlsConfiguration.enableOverflowMenu)
-            _buildMoreButton(_controller, backgroundColor, iconColor, barHeight, iconSize, buttonPadding)
+          if (_controlsConfiguration.enableQualities)
+            buildCupertinoQualitiesButton(backgroundColor, iconColor, barHeight, iconSize, buttonPadding)
+          else
+            const SizedBox(),
+          const SizedBox(width: 4),
+          if (_controlsConfiguration.enableMute)
+            _buildMuteButton(_controller, backgroundColor, iconColor, barHeight, iconSize, buttonPadding)
           else
             const SizedBox(),
         ],
