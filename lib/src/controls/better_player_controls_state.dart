@@ -115,17 +115,15 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
   }
 
   void on2xLongPressMoveUpdate(LongPressMoveUpdateDetails details) {
-    if (betterPlayerController?.isFullScreen ?? false) {
-      final upSpeed = (details.offsetFromOrigin.dx / 100).toStringAsFixed(1);
+    final upSpeed = (details.offsetFromOrigin.dx / 100).toStringAsFixed(1);
 
-      try {
-        var speed = 2.0 + double.parse(upSpeed);
-        speed = speed >= 3.0 ? 3.0 : speed <= 1.0 ? 1.0 : speed;
+    try {
+      var speed = 2.0 + double.parse(upSpeed);
+      speed = speed >= 3.0 ? 3.0 : speed <= 1.0 ? 1.0 : speed;
 
-        betterPlayerController?.setSpeed(speed);
-        betterPlayerController?.show2xListenable.value = speed;
-      } catch (_) {}
-    }
+      betterPlayerController?.setSpeed(speed);
+      betterPlayerController?.show2xListenable.value = speed;
+    } catch (_) {}
   }
 
   Widget build2x() => ValueListenableBuilder(
