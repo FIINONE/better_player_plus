@@ -106,10 +106,8 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
           BetterPlayerMultipleGestureDetector.of(context)!.onLongPress?.call();
         }
-        if (_betterPlayerController?.isFullScreen ?? false) {
-          _betterPlayerController?.setSpeed(2);
-          _betterPlayerController?.show2xListenable.value = 2;
-        }
+        _betterPlayerController?.setSpeed(2);
+        _betterPlayerController?.show2xListenable.value = 2;
       },
       onLongPressCancel: () {
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
@@ -120,10 +118,8 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
           BetterPlayerMultipleGestureDetector.of(context)!.onLongPressEnd?.call();
         }
-        if (_betterPlayerController?.isFullScreen ?? false) {
-          _betterPlayerController?.setSpeed(1);
-          _betterPlayerController?.show2xListenable.value = null;
-        }
+        _betterPlayerController?.setSpeed(1);
+        _betterPlayerController?.show2xListenable.value = null;
       },
       onLongPressMoveUpdate: on2xLongPressMoveUpdate,
       child: AbsorbPointer(
