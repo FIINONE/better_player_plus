@@ -62,6 +62,15 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
     }
   }
 
+  void _clearLongPressSpeedIfNeeded() {
+    final hasOverlay = _betterPlayerController?.show2xListenable.value != null;
+    if (!_isLongPressSpeedActive && !hasOverlay) {
+      return;
+    }
+    _isLongPressSpeedActive = false;
+    unawaited(_resetLongPressSpeed());
+  }
+
   @override
   Widget build(BuildContext context) => buildLTRDirectionality(_buildMainWidget());
 
@@ -99,50 +108,48 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
         _buildBottomBar(backgroundColor, iconColor, barHeight),
       ],
     );
-    return GestureDetector(
-      onTap: () {
-        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-          BetterPlayerMultipleGestureDetector.of(context)!.onTap?.call();
-        }
-        controlsNotVisible ? cancelAndRestartTimer() : changePlayerControlsNotVisible(true);
-      },
-      onDoubleTap: () {
-        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-          BetterPlayerMultipleGestureDetector.of(context)!.onDoubleTap?.call();
-        }
-        cancelAndRestartTimer();
-        _onPlayPause();
-      },
-      onLongPress: () {
-        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-          BetterPlayerMultipleGestureDetector.of(context)!.onLongPress?.call();
-        }
-        _isLongPressSpeedActive = true;
-        _betterPlayerController?.setSpeed(2);
-        _betterPlayerController?.show2xListenable.value = 2;
-      },
-      onLongPressCancel: () {
-        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-          BetterPlayerMultipleGestureDetector.of(context)!.onLongPressCancel?.call();
-        }
-        if (_isLongPressSpeedActive) {
-          _isLongPressSpeedActive = false;
-          _resetLongPressSpeed();
-        }
-      },
-      onLongPressEnd: (details) {
-        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-          BetterPlayerMultipleGestureDetector.of(context)!.onLongPressEnd?.call();
-        }
-        if (_isLongPressSpeedActive) {
-          _isLongPressSpeedActive = false;
-          _resetLongPressSpeed();
-        }
-      },
-      onLongPressMoveUpdate: on2xLongPressMoveUpdate,
-      child: AbsorbPointer(
-        absorbing: controlsNotVisible,
-        child: isFullScreen ? SafeArea(child: controlsColumn) : controlsColumn,
+    return Listener(
+      onPointerUp: (_) => _clearLongPressSpeedIfNeeded(),
+      onPointerCancel: (_) => _clearLongPressSpeedIfNeeded(),
+      child: GestureDetector(
+        onTap: () {
+          if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+            BetterPlayerMultipleGestureDetector.of(context)!.onTap?.call();
+          }
+          controlsNotVisible ? cancelAndRestartTimer() : changePlayerControlsNotVisible(true);
+        },
+        onDoubleTap: () {
+          if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+            BetterPlayerMultipleGestureDetector.of(context)!.onDoubleTap?.call();
+          }
+          cancelAndRestartTimer();
+          _onPlayPause();
+        },
+        onLongPress: () {
+          if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+            BetterPlayerMultipleGestureDetector.of(context)!.onLongPress?.call();
+          }
+          _isLongPressSpeedActive = true;
+          _betterPlayerController?.setSpeed(2);
+          _betterPlayerController?.show2xListenable.value = 2;
+        },
+        onLongPressCancel: () {
+          if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+            BetterPlayerMultipleGestureDetector.of(context)!.onLongPressCancel?.call();
+          }
+          _clearLongPressSpeedIfNeeded();
+        },
+        onLongPressEnd: (details) {
+          if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+            BetterPlayerMultipleGestureDetector.of(context)!.onLongPressEnd?.call();
+          }
+          _clearLongPressSpeedIfNeeded();
+        },
+        onLongPressMoveUpdate: on2xLongPressMoveUpdate,
+        child: AbsorbPointer(
+          absorbing: controlsNotVisible,
+          child: isFullScreen ? SafeArea(child: controlsColumn) : controlsColumn,
+        ),
       ),
     );
   }
