@@ -214,6 +214,7 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
                     else
                       const SizedBox(),
                     buildMaterialPlaybackSpeedText(controlsNotVisible, _onPlayerHide),
+                    buildMaterialSubtitlesButton(controlsNotVisible, _onPlayerHide),
                     buildMaterialQualitiesButton(controlsNotVisible, _onPlayerHide),
                   ],
                 ),

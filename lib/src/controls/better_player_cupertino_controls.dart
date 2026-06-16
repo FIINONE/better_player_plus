@@ -428,6 +428,11 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
           else
             const SizedBox(),
           const SizedBox(width: 4),
+          if (_controlsConfiguration.enableSubtitles)
+            buildCupertinoSubtitlesButton(backgroundColor, iconColor, barHeight, iconSize, buttonPadding)
+          else
+            const SizedBox(),
+          const SizedBox(width: 4),
           if (_controlsConfiguration.enableQualities)
             buildCupertinoQualitiesButton(backgroundColor, iconColor, barHeight, iconSize, buttonPadding)
           else

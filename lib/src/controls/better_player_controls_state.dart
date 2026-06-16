@@ -291,6 +291,31 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
     }
   }
 
+  Widget buildMaterialSubtitlesButton(bool hideStuff, void Function() onPlayerHide) {
+    if (betterPlayerControlsConfiguration.enableSubtitles) {
+      return BetterPlayerMaterialClickableWidget(
+        onTap: () {
+          toggleSubtitles();
+        },
+        child: AnimatedOpacity(
+          opacity: hideStuff ? 0.0 : 1.0,
+          duration: betterPlayerControlsConfiguration.controlsHideTime,
+          onEnd: onPlayerHide,
+          child: Container(
+            height: betterPlayerControlsConfiguration.controlBarHeight,
+            padding: const EdgeInsets.all(8),
+            child: Icon(
+              _getSubtitlesIcon(),
+              color: betterPlayerControlsConfiguration.iconsColor,
+            ),
+          ),
+        ),
+      );
+    } else {
+      return const SizedBox();
+    }
+  }
+
   GestureDetector buildCupertinoQualitiesButton(
     Color backgroundColor,
     Color iconColor,
@@ -324,6 +349,75 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
         ),
       ),
     );
+  }
+
+  GestureDetector buildCupertinoSubtitlesButton(
+    Color backgroundColor,
+    Color iconColor,
+    double barHeight,
+    double iconSize,
+    double buttonPadding,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        toggleSubtitles();
+      },
+      child: AnimatedOpacity(
+        opacity: controlsNotVisible ? 0.0 : 1.0,
+        duration: betterPlayerControlsConfiguration.controlsHideTime,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            decoration: BoxDecoration(
+              color: backgroundColor,
+            ),
+            child: Container(
+              height: barHeight,
+              padding: EdgeInsets.symmetric(horizontal: buttonPadding),
+              child: Icon(_getSubtitlesIcon(), color: iconColor, size: iconSize),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  IconData _getSubtitlesIcon() =>
+      _areSubtitlesEnabled() ? Icons.closed_caption : Icons.closed_caption_outlined;
+
+  bool _areSubtitlesEnabled() {
+    final source = betterPlayerController?.betterPlayerSubtitlesSource;
+    if (source == null) {
+      return false;
+    }
+    return source.type != BetterPlayerSubtitlesSourceType.none;
+  }
+
+  void toggleSubtitles() {
+    final controller = betterPlayerController;
+    if (controller == null) {
+      return;
+    }
+
+    if (_areSubtitlesEnabled()) {
+      controller.setupSubtitleSource(
+        BetterPlayerSubtitlesSource(type: BetterPlayerSubtitlesSourceType.none),
+      );
+      return;
+    }
+
+    final preferred = controller.betterPlayerSubtitlesSourceList.firstWhereOrNull(
+      (source) =>
+          source.type != BetterPlayerSubtitlesSourceType.none &&
+          (source.selectedByDefault ?? false),
+    );
+    final firstAvailable = controller.betterPlayerSubtitlesSourceList.firstWhereOrNull(
+      (source) => source.type != BetterPlayerSubtitlesSourceType.none,
+    );
+    final target = preferred ?? firstAvailable;
+    if (target != null) {
+      controller.setupSubtitleSource(target);
+    }
   }
 
   TextStyle _getSpeedTextStyle(Color textColor) => TextStyle(
