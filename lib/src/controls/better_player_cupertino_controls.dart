@@ -363,14 +363,12 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
   }
 
   Widget _buildRemaining() {
-    final position = _latestValue != null && _latestValue!.duration != null
-        ? _latestValue!.duration! - _latestValue!.position
-        : Duration.zero;
+    final duration = _latestValue != null && _latestValue!.duration != null ? _latestValue!.duration! : Duration.zero;
 
     return Padding(
       padding: const EdgeInsets.only(right: 12),
       child: Text(
-        '-${BetterPlayerUtils.formatDuration(position)}',
+        BetterPlayerUtils.formatDuration(duration),
         style: TextStyle(color: _controlsConfiguration.textColor, fontSize: 12),
       ),
     );
