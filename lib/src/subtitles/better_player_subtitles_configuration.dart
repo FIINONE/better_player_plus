@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 class BetterPlayerSubtitlesConfiguration {
   const BetterPlayerSubtitlesConfiguration({
     this.fontSize = 14,
+    this.fullscreenFontSize = 14,
     this.fontColor = Colors.white,
     this.outlineEnabled = true,
     this.outlineColor = Colors.black,
@@ -20,6 +21,9 @@ class BetterPlayerSubtitlesConfiguration {
 
   ///Subtitle font size
   final double fontSize;
+
+  ///Subtitle font size
+  final double fullscreenFontSize;
 
   ///Subtitle font color
   final Color fontColor;

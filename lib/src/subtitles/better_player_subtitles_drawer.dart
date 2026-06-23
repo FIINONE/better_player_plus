@@ -52,8 +52,11 @@ class _BetterPlayerSubtitlesDrawerState extends State<BetterPlayerSubtitlesDrawe
 
     widget.betterPlayerController.videoPlayerController!.addListener(_updateState);
 
+    final isFullScreen = widget.betterPlayerController.isFullScreen;
+    final fontSize2 = isFullScreen ? _configuration!.fullscreenFontSize : _configuration!.fontSize;
+
     _outerTextStyle = TextStyle(
-      fontSize: _configuration!.fontSize,
+      fontSize: fontSize2,
       fontFamily: _configuration!.fontFamily,
       foreground: Paint()
         ..style = PaintingStyle.stroke
@@ -64,7 +67,7 @@ class _BetterPlayerSubtitlesDrawerState extends State<BetterPlayerSubtitlesDrawe
     _innerTextStyle = TextStyle(
       fontFamily: _configuration!.fontFamily,
       color: _configuration!.fontColor,
-      fontSize: _configuration!.fontSize,
+      fontSize: fontSize2,
     );
 
     super.initState();
