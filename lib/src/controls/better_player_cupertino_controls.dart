@@ -80,7 +80,7 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
           clipBehavior: Clip.none,
           children: [
             _buildTopBar(backgroundColor, iconColor, barHeight, buttonPadding),
-            Positioned(top: isFullScreen ? 28 : 5, left: 0, right: 0, child: build2x()),
+            Positioned(top: isFullScreen ? 16 : 5, left: 0, right: 0, child: build2x()),
           ],
         ),
         if (_wasLoading) Expanded(child: Center(child: _buildLoadingWidget())) else _buildHitArea(),
@@ -167,7 +167,7 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
       onEnd: _onPlayerHide,
       child: Container(
         alignment: Alignment.bottomCenter,
-        margin: EdgeInsets.all(isFullScreen ? 28 : 5),
+        margin: EdgeInsets.all(isFullScreen ? 16 : 5),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: Container(
@@ -405,9 +405,9 @@ class _BetterPlayerCupertinoControlsState extends BetterPlayerControlsState<Bett
     return Container(
       height: barHeight,
       margin: EdgeInsets.only(
-        top: isFullScreen ? 28 : 5,
-        right: isFullScreen ? 28 : 5,
-        left: isFullScreen ? 28 : 5,
+        top: isFullScreen ? 16 : 5,
+        right: isFullScreen ? 16 : 5,
+        left: isFullScreen ? 16 : 5,
       ),
       child: Row(
         children: <Widget>[
